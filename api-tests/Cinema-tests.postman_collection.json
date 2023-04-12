@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "c940a73c-068f-483b-b49e-59aed79bdf8b",
+		"name": "Cinema-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24652579"
+	},
+	"item": [
+		{
+			"name": "Create users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let initialmockData = [{\r",
+							"  \"email\": \"kjarrelt0@discuz.net\",\r",
+							"  \"password\": \"iJKbT4w\",\r",
+							"  \"firstName\": \"Korella\",\r",
+							"  \"lastName\": \"Jarrelt\",\r",
+							"  \"phoneNumber\": \"631-881-5010\"\r",
+							"}, {\r",
+							"  \"email\": \"jklaffs1@tuttocitta.it\",\r",
+							"  \"password\": \"LHj6HwtCcglw\",\r",
+							"  \"firstName\": \"Jehu\",\r",
+							"  \"lastName\": \"Klaffs\",\r",
+							"  \"phoneNumber\": \"518-507-7179\"\r",
+							"}, {\r",
+							"  \"email\": \"tmalley2@howstuffworks.com\",\r",
+							"  \"password\": \"ncWu35\",\r",
+							"  \"firstName\": \"Tabbi\",\r",
+							"  \"lastName\": \"Malley\",\r",
+							"  \"phoneNumber\": \"782-894-7665\"\r",
+							"}, {\r",
+							"  \"email\": \"dtomaszynski3@comcast.net\",\r",
+							"  \"password\": \"XDE53vbT0mf\",\r",
+							"  \"firstName\": \"Dall\",\r",
+							"  \"lastName\": \"Tomaszynski\",\r",
+							"  \"phoneNumber\": \"399-146-3347\"\r",
+							"}, {\r",
+							"  \"email\": \"lmessager4@is.gd\",\r",
+							"  \"password\": \"yyKc8j\",\r",
+							"  \"firstName\": \"Lira\",\r",
+							"  \"lastName\": \"Messager\",\r",
+							"  \"phoneNumber\": \"710-428-0685\"\r",
+							"}];\r",
+							"\r",
+							"\r",
+							"\r",
+							"// In order to remember mockData we need to save it as \r",
+							"// an environment variable (that will survive between requests)\r",
+							"// unfortunately you have to use pm.environment.set('variable name', 'variable value')\r",
+							"//to do so and you can ony use strings as value , so\r",
+							"// we need to stringify mockData as JSON:\r",
+							"\r",
+							"// first set an index -> which user are you going to create\r",
+							"if (!pm.environment.get('mockData')){\r",
+							"    pm.environment.set('mockData', JSON.stringify(initialmockData));\r",
+							"// also save which user to create as a userIndex\r",
+							" pm.environment.set('userIndex', '0');\r",
+							"}\r",
+							"\r",
+							"//....................................................................................\r",
+							"\r",
+							"//unpack environment variables into normal local variables\r",
+							"\r",
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"let user = mockData[userIndex];\r",
+							"\r",
+							"//set user properties as environment variables\r",
+							"\r",
+							"for(let [key,val] of Object.entries(user)){\r",
+							"    pm.environment.set(key,val);\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// response from server\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test('Expect status code 200', () => {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"check that affected rows is 1\", () =>{\r",
+							"    pm.expect(response.affectedRows).to.equal(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that insertID is > 0\", () => {\r",
+							"    pm.expect(response.insertID).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"mockData[userIndex],id = response.insertID;\r",
+							"\r",
+							"// Repack changed data to environment variables\r",
+							"pm.environment.set('mockData', JSON.stringify(mockData));\r",
+							"\r",
+							"// Add 1 to userIndex and check if there is a \r",
+							"userIndex++;\r",
+							"\r",
+							"if(!mockData[userIndex]) {\r",
+							"    //all users added,reset userInex to zero for next request\r",
+							"    pm.environment.set('userIndex', '0');\r",
+							"\r",
+							"}\r",
+							"\r",
+							"else {\r",
+							"    // \"loop\" add the next user by repeating this request\r",
+							"    pm.environment.set('userIndex', userIndex);\r",
+							"    postman.setNextRequest('Create users');\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"phoneNumber\": \"{{phoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5173/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5173",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"// current user\r",
+							"let user = mockData[userIndex];\r",
+							"\r",
+							"// set the users id as en anviroment\r",
+							"pm.environment.set('id', 'user.id');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"let user = mockData[userIndex];\r",
+							"\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test('Expect status code 200', () => {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"\r",
+							"    \r",
+							"\r",
+							"});\r",
+							"pm.test('Expect db values to equal original values for user', () => {\r",
+							"let userWithoutPassword = {...user, password: null}\r",
+							"let responseWithoutPassword = {...response,password: null};\r",
+							"pm.expect(userWithoutPassword).to.deep.equal(responseWithoutPassword);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"// Add 1 to userIndex and check if there is a \r",
+							"userIndex++;\r",
+							"\r",
+							"if(!mockData[userIndex]) {\r",
+							"    //all users added,reset userInex to zero for next request\r",
+							"    pm.environment.set('userIndex', '0');\r",
+							"\r",
+							"}\r",
+							"\r",
+							"else {\r",
+							"    // \"loop\" add the next user by repeating this request\r",
+							"    pm.environment.set('userIndex', userIndex);\r",
+							"    postman.setNextRequest('Create users');\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5173//api/users/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5173",
+					"path": [
+						"",
+						"api",
+						"users",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"// current user\r",
+							"let user = mockData[userIndex];\r",
+							"\r",
+							"// set the users id as en anviroment\r",
+							"pm.environment.set('id', 'user.id');\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get userIndex from environment \r",
+							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
+							"let userIndex = +pm.environment.get('userIndex');\r",
+							"\r",
+							"let user = mockData[userIndex];\r",
+							"\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test('Expect status code 200', () => {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"\r",
+							"    \r",
+							"\r",
+							"});\r",
+							"pm.test('Expect db values to equal original values for user', () => {\r",
+							"let userWithoutPassword = {...user, password: null}\r",
+							"let responseWithoutPassword = {...response,password: null};\r",
+							"pm.expect(userWithoutPassword).to.deep.equal(responseWithoutPassword);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"pm.test(\"check that affected rows is 1\", () =>{\r",
+							"    pm.expect(response.affectedRows).to.equal(1);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// Add 1 to userIndex and check if there is a \r",
+							"userIndex++;\r",
+							"\r",
+							"if(!mockData[userIndex]) {\r",
+							"    //all users added,reset userInex to zero for next request\r",
+							"    pm.environment.set('userIndex', '0');\r",
+							"\r",
+							"}\r",
+							"\r",
+							"else {\r",
+							"    // \"loop\" add the next user by repeating this request\r",
+							"    pm.environment.set('userIndex', userIndex);\r",
+							"    postman.setNextRequest('Delete users');\r",
+							"}\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5173//api/users/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5173",
+					"path": [
+						"",
+						"api",
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
