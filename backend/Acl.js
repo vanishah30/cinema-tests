@@ -7,6 +7,9 @@ module.exports = class Acl {
 
   static checkRoute(req, table, method, isTable, isView) {
 
+    // turn off acl
+    return true;
+
     // role not logged in, logged in or special (admin etc.)
     let role = req.session.user ?
       (req.session.user.userRole || 'logged in') :

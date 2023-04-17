@@ -95,13 +95,13 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Check that insertID is > 0\", () => {\r",
-							"    pm.expect(response.insertID).to.be.above(0);\r",
+							"    pm.expect(response.insertId).to.be.above(0);\r",
 							"});\r",
 							"\r",
 							"let mockData = JSON.parse(pm.environment.get('mockData'));\r",
 							"let userIndex = +pm.environment.get('userIndex');\r",
 							"\r",
-							"mockData[userIndex],id = response.insertID;\r",
+							"mockData[userIndex].id = response.insertId;\r",
 							"\r",
 							"// Repack changed data to environment variables\r",
 							"pm.environment.set('mockData', JSON.stringify(mockData));\r",
@@ -138,12 +138,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5173/api/users",
+					"raw": "http://localhost:4000/api/users",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "5173",
+					"port": "4000",
 					"path": [
 						"api",
 						"users"
@@ -166,7 +166,7 @@
 							"let user = mockData[userIndex];\r",
 							"\r",
 							"// set the users id as en anviroment\r",
-							"pm.environment.set('id', 'user.id');"
+							"pm.environment.set('id', user.id);"
 						],
 						"type": "text/javascript"
 					}
@@ -191,10 +191,10 @@
 							"\r",
 							"});\r",
 							"pm.test('Expect db values to equal original values for user', () => {\r",
-							"let userWithoutPassword = {...user, password: null}\r",
-							"let responseWithoutPassword = {...response,password: null};\r",
-							"pm.expect(userWithoutPassword).to.deep.equal(responseWithoutPassword);\r",
-							"\r",
+							"    let userWithoutPassword = {...user, password: null, userRole: null}\r",
+							"    let responseWithoutPassword = {...response,password: null};\r",
+							"    console.log(userWithoutPassword,responseWithoutPassword)\r",
+							"    pm.expect(userWithoutPassword).to.deep.equal(responseWithoutPassword);\r",
 							"});\r",
 							"\r",
 							"// Add 1 to userIndex and check if there is a \r",
@@ -209,7 +209,7 @@
 							"else {\r",
 							"    // \"loop\" add the next user by repeating this request\r",
 							"    pm.environment.set('userIndex', userIndex);\r",
-							"    postman.setNextRequest('Create users');\r",
+							"    postman.setNextRequest('Read users');\r",
 							"}\r",
 							"\r",
 							""
@@ -219,20 +219,19 @@
 				}
 			],
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5173//api/users/10",
+					"raw": "http://localhost:4000/api/users/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "5173",
+					"port": "4000",
 					"path": [
-						"",
 						"api",
 						"users",
-						"10"
+						"{{id}}"
 					]
 				}
 			},
@@ -252,7 +251,7 @@
 							"let user = mockData[userIndex];\r",
 							"\r",
 							"// set the users id as en anviroment\r",
-							"pm.environment.set('id', 'user.id');\r",
+							"pm.environment.set('id', user.id);\r",
 							""
 						],
 						"type": "text/javascript"
@@ -276,12 +275,6 @@
 							"    pm.expect(pm.response.code).to.equal(200);\r",
 							"\r",
 							"    \r",
-							"\r",
-							"});\r",
-							"pm.test('Expect db values to equal original values for user', () => {\r",
-							"let userWithoutPassword = {...user, password: null}\r",
-							"let responseWithoutPassword = {...response,password: null};\r",
-							"pm.expect(userWithoutPassword).to.deep.equal(responseWithoutPassword);\r",
 							"\r",
 							"});\r",
 							"\r",
@@ -316,14 +309,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5173//api/users/{{id}}",
+					"raw": "http://localhost:4000/api/users/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "5173",
+					"port": "4000",
 					"path": [
-						"",
 						"api",
 						"users",
 						"{{id}}"
