@@ -114,8 +114,8 @@ CREATE TABLE `moviesXcategories` (
   `categoryId` int unsigned NOT NULL,
   PRIMARY KEY (`movieId`,`categoryId`),
   KEY `categoryId` (`categoryId`),
-  CONSTRAINT `moviesXcategories_ibfk_1` FOREIGN KEY (`movieId`) REFERENCES `movies` (`id`),
-  CONSTRAINT `moviesXcategories_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`)
+  CONSTRAINT `moviesxcategories_ibfk_1` FOREIGN KEY (`movieId`) REFERENCES `movies` (`id`),
+  CONSTRAINT `moviesxcategories_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_sv_0900_ai_ci;
 
 
