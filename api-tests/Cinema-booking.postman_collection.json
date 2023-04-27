@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d4bb1a91-50b0-455a-aa5a-b96fc0b9ccf2",
+		"_postman_id": "f04467ef-e6dd-4900-a449-11e2a5971ef8",
 		"name": "Cinema-bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "24652579"
@@ -173,7 +173,23 @@
 							"let response = pm.response.json()[0];",
 							"",
 							"// Check that we have Adult, Adult in ticketTypes",
-							"// + that we have correct seats number in seats"
+							"// + that we have correct movie",
+							"// + that we have correct seats number in seats",
+							"",
+							"pm.test('Expect ticketTypes toEqual Adult, Adult', () => {",
+							"    pm.expect(response.ticketTypes).to.equal(\"Adult, Adult\");",
+							"});",
+							"",
+							"pm.test('Expect movie title toEqual Crocodile Dundee', () => {",
+							"    pm.expect(response.movie).to.equal(\"Crocodile Dundee\")",
+							"});",
+							"",
+							"let seat1 = pm.environment.get(\"seat1\");",
+							"let seat2 = pm.environment.get(\"seat2\");",
+							"",
+							"pm.test('Expect seat1, seat2 seatId toEqual Create seat1, seat1 seatId', () => {",
+							"    pm.expect(response.seats).to.equal(seat1 + \", \" + seat2)",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -219,7 +235,19 @@
 						"exec": [
 							"let response = pm.response.json()[0];",
 							"",
-							"// Check that the seats are occupied now!"
+							"// Check that the seats are occupied now!",
+							"",
+							"let seat1 = pm.environment.get(\"seat1\");",
+							"let seat2 = pm.environment.get(\"seat2\");",
+							"",
+							"",
+							"pm.test('Check occupied seats', () => {",
+							"    pm.expect(response.occupiedSeats).to.include(\"2\");",
+							"});",
+							"",
+							"pm.test('Check booked seats', () => {",
+							"    pm.expect(response.occupiedSeats).to.include(seat1 + \", \" + seat2);",
+							"});"
 						],
 						"type": "text/javascript"
 					}
